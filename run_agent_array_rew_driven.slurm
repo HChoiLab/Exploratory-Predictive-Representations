@@ -26,15 +26,16 @@ rew_idx=$(( task_id % n_rew ))
 rew_p="${rew_p_lst[$rew_idx]}"
 
 
-mkdir -p "REWARD_DRIVEN_1000_runs_slurm_20_window_agent_rew_p_${rew_p}/${seed}"
+# mkdir -p "REWARD_DRIVEN_1000"
+mkdir -p "REWARD_DRIVEN_1000/REWARD_DRIVEN_1000_runs_slurm_20_window_agent_rew_p_${rew_p}/${seed}"
 
 
 python -m active_sensing.action_selection_value_map \
     --num-bouts 1000 \
     --horizon 0 \
     --k-info-gain 20 \
-    --metrics-out-dir "REWARD_DRIVEN_1000_runs_slurm_20_window_agent_rew_p_${rew_p}/${seed}" \
-    --summary-csv "REWARD_DRIVEN_1000_runs_slurm_20_window_agent_rew_p_${rew_p}/${seed}/summary.csv" \
+    --metrics-out-dir "REWARD_DRIVEN_1000/REWARD_DRIVEN_1000_runs_slurm_20_window_agent_rew_p_${rew_p}/${seed}" \
+    --summary-csv "REWARD_DRIVEN_1000/REWARD_DRIVEN_1000_runs_slurm_20_window_agent_rew_p_${rew_p}/${seed}/summary.csv" \
     --train-window 20 \
     --z-dim 16 \
     --hidden-dim 64 \
