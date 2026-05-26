@@ -1,0 +1,14 @@
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.10
+  - ipykernel
+  - ipython
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - pytorch
+  - tqdm
+  - umap-learn
