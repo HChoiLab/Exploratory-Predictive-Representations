@@ -1,24 +1,77 @@
-# Exploratory Predictive Representations
+# Running Experiments
 
-This repository contains code for training and analyzing predictive representations in a binary-tree maze. The project studies how exploratory and reward-driven behavioral experience shapes the geometry of latent representations learned by a predictive-coding model.
+Run all commands from the repository root.
 
-The model is trained on either self-generated agent trajectories or mouse trajectories from a labyrinth task. It predicts the next maze state and reward probability, and its latent space is used to analyze how exploration-exploitation balance affects representational geometry.
+### Main experiment (symmetric maze)
 
-## Repository structure
+```bash
+python -m experiments.train_main \
+    --num-bouts 1000 --horizon 0 \
+    --z-dim 16 --hidden-dim 64 \
+    --beta 0.001 --sparse-beta 0.1 --reward-beta 1 \
+    --online-lr-prior 0.001 --online-lr-posterior 0.001 --online-lr-other 0.001 \
+    --train-window 20 \
+    --reward-driven-p 0.02 --seed 42 \
+    --metrics-out-dir runs/main \
+    --summary-csv runs/main/summary.csv
+```
 
-- `active_sensing/core/` contains the predictive-coding perception model and data loading code.
-- `active_sensing/train_model_windows.py` trains the perception model on mouse trajectory windows.
-- `active_sensing/action_selection_value_map.py` trains the active agent with value-map-based reward-driven action selection.
-- `active_sensing/*.ipynb` contains notebooks used for figure generation and additional analyses.
-- `active_sensing/utils/` contains helper functions.
-- `outdata/` contains mouse trajectory data from Rosenberg et al. [1].
-- `MM_Maze_Utils.py`, `MM_Plot_Utils.py`, and `MM_Traj_Utils.py` contain maze and trajectory utilities adapted from Rosenberg et al. [1].
-- `run_all_mice_window.sh` trains the model on mouse trajectory.
-- `run_agent_array_rew_driven.slurm` runs active-agent training.
+Change `--reward-driven-p` and `--seed` for other conditions.
 
-## Reference
+*For the following experiments, use the same hyperparameters as in the main experiment, changing the script name and the additional arguments shown below.*
 
-[1] Matthew Rosenberg, Tony Zhang, Pietro Perona, and Markus Meister.  
-*Mice in a labyrinth show rapid learning, sudden insight, and efficient exploration.*  
-eLife, 10:e66175, July 2021.  
-doi: [10.7554/eLife.66175](https://doi.org/10.7554/eLife.66175)
+### Exploration strategies
+
+```bash
+python -m experiments.train_exploration_policies \
+    --exploration-policy random \
+```
+
+Supported policies: `eig`, `random`, `count`.
+
+### Asymmetric maze
+
+```bash
+python -m experiments.train_asymmetric_maze \
+    --waterport-node 126 \
+```
+
+### History-free model
+
+```bash
+python -m experiments.train_history_free \
+```
+
+### Mouse data preparation
+
+Mouse behavioral data are available from [Rosenberg et al. (2021)](https://github.com/markusmeister/Rosenberg-2021-Repository).
+
+Download the original recordings and place the `*-tf` files in the `outdata/` directory.
+
+Convert the recordings into per-bout `.npz` files using:
+
+```bash
+python -m preprocessing.prepare_mouse_data \
+    --tf-dir outdata \
+    --out-dir data
+```
+
+The script removes consecutive repeated nodes, excludes bouts with fewer than five transitions, and saves node and action sequences for each recording.
+
+### Training on mouse trajectories
+
+To train the predictive model on an individual recording:
+
+```bash
+python -m experiments.train_mouse_data \
+    --bouts-dir data/B5-tf \
+    --z-dim 16 --hidden-dim 64 \
+    --beta 0.001 --sparse_beta 0.1 --reward_beta 1 \
+    --online-lr-prior 0.001 \
+    --online-lr-posterior 0.001 \
+    --online-lr-other 0.001 \
+    --train-window 20 \
+    --metrics-out-dir runs/mouse_B5
+```
+
+Replace `B5` with the desired recording identifier.
