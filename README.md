@@ -39,7 +39,7 @@ python -m experiments.train_asymmetric_maze \
 ### History-free model
 
 ```bash
-python -m experiments.train_history_free \
+python -m experiments.train_history_free 
 ```
 
 ### Mouse data preparation
