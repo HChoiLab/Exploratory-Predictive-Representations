@@ -26,6 +26,7 @@ def save_npz(path: str, **arrays):
 
 
 def _to_serializable(o):
+    """Recursively convert numpy arrays, numpy scalars, and torch tensors to JSON-serializable types."""
     if isinstance(o, dict):
         return {k: _to_serializable(v) for k, v in o.items()}
     if isinstance(o, (list, tuple)):
